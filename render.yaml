@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: lineshop
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    plan: free
+    envVars:
+      - key: LINE_CHANNEL_ACCESS_TOKEN
+        sync: false
+      - key: LINE_CHANNEL_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: ADMIN_LINE_USER_ID
+        sync: false
+      - key: ADMIN_PASSWORD
+        value: admin1234
+      - key: SECRET_KEY
+        generateValue: true
