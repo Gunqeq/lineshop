@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}หน้าหลัก — LineSmart{% endblock %}
+{% block content %}
+<h4 class="mb-4">ภาพรวม</h4>
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="card text-white" style="background:#06c755">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ orders|length }}</div>
+        <div>ออเดอร์ล่าสุด (10 รายการ)</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-warning">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ pending }}</div>
+        <div>รอดำเนินการ</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card text-white bg-info">
+      <div class="card-body">
+        <div class="fs-2 fw-bold">{{ products|selectattr('active','eq',1)|list|length }}</div>
+        <div>สินค้าทั้งหมด</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5>ออเดอร์ล่าสุด</h5>
+<div class="table-responsive">
+<table class="table table-hover bg-white rounded shadow-sm">
+  <thead class="table-light"><tr>
+    <th>#</th><th>ลูกค้า</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>วันที่</th>
+  </tr></thead>
+  <tbody>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.id }}</td>
+    <td>{{ o.customer_name }}<br><small class="text-muted">{{ o.phone }}</small></td>
+    <td><small>{{ o.items_summary }}</small></td>
+    <td>{{ "{:,}".format(o.total) }} ฿</td>
+    <td>
+      {% if o.status == 'pending' %}<span class="badge bg-warning text-dark">รอดำเนินการ</span>
+      {% elif o.status == 'paid' %}<span class="badge bg-info">ชำระแล้ว</span>
+      {% elif o.status == 'shipped' %}<span class="badge bg-primary">จัดส่งแล้ว</span>
+      {% elif o.status == 'done' %}<span class="badge bg-success">เสร็จสิ้น</span>
+      {% else %}<span class="badge bg-secondary">{{ o.status }}</span>{% endif %}
+    </td>
+    <td><small>{{ o.created_at }}</small></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6" class="text-center text-muted">ยังไม่มีออเดอร์</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

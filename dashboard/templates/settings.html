@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}ตั้งค่าร้าน — LineSmart{% endblock %}
+{% block content %}
+<h4 class="mb-4">ตั้งค่าร้านค้า</h4>
+<div class="card shadow-sm" style="max-width:600px">
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label fw-bold">ชื่อร้าน</label>
+        <input name="name" class="form-control" value="{{ store.name }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">เวลาเปิด-ปิด</label>
+        <input name="hours" class="form-control" value="{{ store.hours }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">ค่าจัดส่ง</label>
+        <input name="shipping" class="form-control" value="{{ store.shipping }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">ช่องทางชำระเงิน</label>
+        <input name="payment" class="form-control" value="{{ store.payment }}">
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-bold">LINE User ID แอดมิน</label>
+        <input name="admin_user_id" class="form-control" value="{{ store.admin_user_id or '' }}"
+               placeholder="Uxxxxxxxxxx">
+        <div class="form-text">ใช้รับการแจ้งเตือนออเดอร์ใหม่ผ่าน LINE</div>
+      </div>
+      <button class="btn btn-success px-4">บันทึก</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

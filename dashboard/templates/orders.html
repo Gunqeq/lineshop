@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}ออเดอร์ — LineSmart{% endblock %}
+{% block content %}
+<h4 class="mb-4">ออเดอร์ทั้งหมด</h4>
+<div class="table-responsive">
+<table class="table table-hover bg-white rounded shadow-sm">
+  <thead class="table-light"><tr>
+    <th>#</th><th>ลูกค้า</th><th>สินค้า</th><th>ยอด</th><th>สถานะ</th><th>วันที่</th><th>อัปเดต</th>
+  </tr></thead>
+  <tbody>
+  {% for o in orders %}
+  <tr>
+    <td>{{ o.id }}</td>
+    <td><strong>{{ o.customer_name }}</strong><br>
+        <small class="text-muted">{{ o.phone }}</small><br>
+        <small class="text-muted">{{ o.address }}</small></td>
+    <td><small>{{ o.items_summary }}</small></td>
+    <td>{{ "{:,}".format(o.total) }} ฿</td>
+    <td>
+      {% if o.status == 'pending' %}<span class="badge bg-warning text-dark">รอดำเนินการ</span>
+      {% elif o.status == 'paid' %}<span class="badge bg-info">ชำระแล้ว</span>
+      {% elif o.status == 'shipped' %}<span class="badge bg-primary">จัดส่งแล้ว</span>
+      {% elif o.status == 'done' %}<span class="badge bg-success">เสร็จสิ้น</span>
+      {% elif o.status == 'cancelled' %}<span class="badge bg-danger">ยกเลิก</span>
+      {% else %}<span class="badge bg-secondary">{{ o.status }}</span>{% endif %}
+    </td>
+    <td><small>{{ o.created_at }}</small></td>
+    <td>
+      <form method="POST" action="/admin/orders/{{ o.id }}/status">
+        <select name="status" class="form-select form-select-sm d-inline" style="width:auto">
+          {% for s in ['pending','paid','shipped','done','cancelled'] %}
+          <option value="{{ s }}" {% if o.status==s %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <button class="btn btn-sm btn-outline-success ms-1">บันทึก</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7" class="text-center text-muted">ยังไม่มีออเดอร์</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}
