@@ -10,7 +10,7 @@ DB_PATH = os.getenv("DB_PATH", "lineshop.db")
 
 
 def get_conn():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     return conn
@@ -151,7 +151,10 @@ def create_order(line_user_id, customer_name, address, phone, items):
             VALUES (:order_id, :product_id, :product_name, :price, :qty)
         """, [{**i, "order_id": order_id} for i in items])
         for i in items:
-            reduce_stock(i["product_id"], i["qty"])
+            conn.execute(
+                "UPDATE products SET stock = MAX(0, stock-?) WHERE id=?",
+                (i["qty"], i["product_id"])
+            )
         return order_id, total
 
 
