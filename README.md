@@ -1,93 +1,335 @@
-# LINE Chatbot Starter (Flask + Gemini AI)
+# LINE Chatbot Starter — Flask + Gemini AI
 
-Chatbot ตอบลูกค้าอัตโนมัติสำหรับร้านค้าออนไลน์ เชื่อมต่อ LINE Official Account
-ใช้ Gemini AI ให้บอทเข้าใจภาษาธรรมชาติ ไม่ใช่แค่ keyword matching
+Chatbot ตอบลูกค้าอัตโนมัติสำหรับร้านค้าออนไลน์ เชื่อมต่อกับ **LINE Official Account** และใช้ **Gemini AI** เพื่อให้บอทเข้าใจภาษาธรรมชาติ ไม่ได้จำกัดแค่การตรวจจับ Keyword
 
-## โครงสร้างไฟล์
+---
 
-```
+## 📁 โครงสร้างโปรเจกต์
+
+```text
 line-chatbot-starter/
-├── app.py              # โค้ดหลัก รับ webhook จาก LINE และส่งต่อ Gemini
-├── store_data.py        # ข้อมูลร้านค้า/สินค้า (แก้ตรงนี้ให้ตรงกับร้านจริง)
-├── requirements.txt     # รายชื่อ library ที่ต้องติดตั้ง
-├── .env.example          # ตัวอย่างไฟล์ตั้งค่า (copy เป็น .env)
-└── .gitignore
+├── app.py              # โค้ดหลัก รับ Webhook จาก LINE และส่งต่อ Gemini
+├── store_data.py       # ข้อมูลร้านค้าและสินค้า
+├── requirements.txt    # รายชื่อ Python libraries ที่ต้องติดตั้ง
+├── .env.example        # ตัวอย่างไฟล์ Environment Variables
+└── .gitignore          # ป้องกันไฟล์สำคัญถูก Commit
 ```
 
-## ขั้นตอนติดตั้ง
+---
 
-### 1. สร้าง LINE Official Account + Channel
+# 🚀 ขั้นตอนติดตั้ง
 
-1. ไปที่ [LINE Developers Console](https://developers.line.biz/console/)
-2. สร้าง Provider ใหม่ (ถ้ายังไม่มี)
-3. สร้าง Channel แบบ "Messaging API"
-4. ไปที่แท็บ "Messaging API" คัดลอกค่า:
-   - **Channel access token** (กด Issue ถ้ายังไม่มี)
-   - **Channel secret** (อยู่แท็บ Basic settings)
+## 1. สร้าง LINE Official Account + Channel
 
-### 2. สร้าง Gemini API Key
+1. เข้า [LINE Developers Console](https://developers.line.biz/console/)
+2. สร้าง **Provider** ใหม่ หากยังไม่มี
+3. สร้าง Channel ประเภท **Messaging API**
+4. ไปที่แท็บ **Messaging API**
+5. คัดลอกค่าต่อไปนี้
 
-1. ไปที่ [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. กด Create API Key คัดลอกมาเก็บไว้
+* **Channel access token** — กด `Issue` หากยังไม่มี
+* **Channel secret** — อยู่ในแท็บ `Basic settings`
 
-### 3. ติดตั้งโปรเจกต์
+---
+
+## 2. สร้าง Gemini API Key
+
+1. เข้า [Google AI Studio](https://aistudio.google.com/app/apikey)
+2. กด **Create API Key**
+3. คัดลอก API Key และเก็บไว้สำหรับตั้งค่าใน `.env`
+
+> ⚠️ **ห้ามนำ API Key ไปใส่ไว้ใน Source Code หรือ Commit ขึ้น GitHub**
+
+---
+
+## 3. ติดตั้งโปรเจกต์
+
+### สร้าง Virtual Environment
 
 ```bash
-# สร้าง virtual environment
 python -m venv venv
-source venv/bin/activate  # Windows ใช้: venv\Scripts\activate
-
-# ติดตั้ง library
-pip install -r requirements.txt
-
-# ตั้งค่า environment variables
-cp .env.example .env
-# แล้วเปิดไฟล์ .env ใส่ค่า token/key ที่ได้จากขั้นตอนก่อนหน้า
 ```
 
-### 4. แก้ข้อมูลร้านค้า
+### เปิดใช้งาน Virtual Environment
 
-เปิดไฟล์ `store_data.py` แก้ชื่อร้าน เวลาเปิด-ปิด ค่าส่ง และรายการสินค้าให้ตรงกับร้านจริง
+**Windows**
 
-### 5. รันเซิร์ฟเวอร์
+```bash
+venv\Scripts\activate
+```
+
+**macOS / Linux**
+
+```bash
+source venv/bin/activate
+```
+
+### ติดตั้ง Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 4. ตั้งค่า Environment Variables
+
+คัดลอกไฟล์ `.env.example` เป็น `.env`
+
+**Windows**
+
+```bash
+copy .env.example .env
+```
+
+**macOS / Linux**
+
+```bash
+cp .env.example .env
+```
+
+จากนั้นเปิดไฟล์ `.env` แล้วใส่ค่าที่ได้รับจาก LINE และ Gemini
+
+ตัวอย่าง:
+
+```env
+LINE_CHANNEL_ACCESS_TOKEN=your_line_channel_access_token
+LINE_CHANNEL_SECRET=your_line_channel_secret
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+> 🔒 **อย่า Commit ไฟล์ `.env` ขึ้น GitHub**
+
+---
+
+# 🏪 5. ตั้งค่าข้อมูลร้านค้า
+
+เปิดไฟล์:
+
+```text
+store_data.py
+```
+
+แล้วแก้ข้อมูลให้ตรงกับร้านจริง เช่น
+
+* ชื่อร้าน
+* รายละเอียดร้าน
+* เวลาเปิด-ปิด
+* ค่าจัดส่ง
+* รายการสินค้า
+* ราคา
+* รายละเอียดสินค้า
+
+ตัวอย่าง:
+
+```python
+STORE_NAME = "My Online Shop"
+
+STORE_INFO = {
+    "open_time": "09:00",
+    "close_time": "18:00",
+    "shipping_fee": 50,
+}
+```
+
+---
+
+# ▶️ 6. รันเซิร์ฟเวอร์
+
+ใช้คำสั่ง:
 
 ```bash
 python app.py
 ```
 
-เซิร์ฟเวอร์จะรันที่ `http://localhost:5000`
+หากทำงานสำเร็จ Server จะเปิดที่:
 
-### 6. เปิด webhook ให้ LINE เรียกได้ (ใช้ ngrok)
+```text
+http://localhost:5000
+```
 
-เครื่อง local เราไม่มี public URL ต้องใช้ ngrok เปิด tunnel ชั่วคราว
+---
+
+# 🌐 7. เปิด Webhook ให้ LINE เข้าถึง Server
+
+เนื่องจาก `localhost` ไม่สามารถให้ LINE เข้าถึงโดยตรงได้ จึงต้องใช้ **ngrok** เพื่อสร้าง Public URL ชั่วคราว
+
+ดาวน์โหลด ngrok ได้จาก [ngrok](https://ngrok.com/download)
+
+จากนั้นรัน:
 
 ```bash
-# ติดตั้ง ngrok จาก https://ngrok.com/download
 ngrok http 5000
 ```
 
-จะได้ URL แบบ `https://xxxx-xx-xx-xx-xx.ngrok-free.app`
+จะได้ URL ประมาณ:
 
-นำ URL นี้ + `/callback` (เช่น `https://xxxx.ngrok-free.app/callback`)
-ไปใส่ในช่อง **Webhook URL** ที่หน้า LINE Developers Console
-แท็บ Messaging API > Webhook settings แล้วกด Verify
+```text
+https://xxxx-xx-xx-xx-xx.ngrok-free.app
+```
 
-อย่าลืมเปิด "Use webhook" เป็น Enabled และปิด "Auto-reply messages" ใน
-LINE Official Account Manager เพื่อไม่ให้ชนกับบอทของเรา
+นำ URL ไปต่อท้ายด้วย:
 
-### 7. ทดสอบ
+```text
+/callback
+```
 
-เพิ่มเพื่อน LINE OA ของคุณ (QR code อยู่หน้า Messaging API)
-แล้วลองพิมพ์คุยดู เช่น "มีเสื้อสีดำไหม" หรือ "ค่าส่งเท่าไหร่"
+ตัวอย่าง:
 
-## 📸 Screenshots
+```text
+https://xxxx.ngrok-free.app/callback
+```
 
-|  User — Chat |  Admin — Dashboard |
-|:---:|:---:|
-| <img width="869" height="1884" alt="image" src="https://github.com/user-attachments/assets/ac2af9e6-7923-4065-b31f-eca94b625c1c" />
- | <img width="1900" height="990" alt="image" src="https://github.com/user-attachments/assets/8fd055cb-287c-4e6d-b843-bb8458b184b7" />
- |
+จากนั้นนำ URL นี้ไปใส่ใน:
 
+**LINE Developers Console → Messaging API → Webhook settings**
 
-ห้าม commit ไฟล์ `.env` ขึ้น GitHub เด็ดขาด (มี `.gitignore` กันไว้ให้แล้ว)
-ถ้า API key หลุดไปที่ไหน ให้ revoke แล้วสร้างใหม่ทันที
+แล้วกด:
+
+```text
+Verify
+```
+
+หากสำเร็จ ระบบจะแจ้งว่า Webhook สามารถเชื่อมต่อได้
+
+---
+
+## ⚙️ 8. เปิดใช้งาน Webhook
+
+ในหน้า **Messaging API**
+
+ตั้งค่า:
+
+```text
+Use webhook: Enabled
+```
+
+และใน **LINE Official Account Manager**
+
+ปิด:
+
+```text
+Auto-reply messages
+```
+
+เพื่อป้องกันข้อความตอบกลับซ้ำกับ Chatbot ของเรา
+
+---
+
+# 💬 9. ทดสอบ Chatbot
+
+เพิ่มเพื่อน LINE Official Account ของคุณ
+
+จากนั้นลองส่งข้อความ เช่น:
+
+```text
+มีเสื้อสีดำไหม
+```
+
+หรือ
+
+```text
+ค่าส่งเท่าไหร่
+```
+
+หรือ
+
+```text
+ร้านเปิดกี่โมง
+```
+
+Gemini AI จะช่วยให้ Chatbot เข้าใจคำถามที่มีรูปแบบแตกต่างกันได้ เช่น:
+
+```text
+เสื้อดำมีมั้ย
+```
+
+```text
+ขอเสื้อสีดำหน่อย
+```
+
+```text
+มีเสื้อโทนดำหรือเปล่า
+```
+
+---
+
+# 📸 Screenshots
+
+## 👤 User — Chat
+
+<p align="center">
+  <img
+    width="420"
+    src="https://github.com/user-attachments/assets/ac2af9e6-7923-4065-b31f-eca94b625c1c"
+    alt="LINE Chatbot User Interface"
+  />
+</p>
+
+---
+
+## 🛠️ Admin — Dashboard
+
+<p align="center">
+  <img
+    width="900"
+    src="https://github.com/user-attachments/assets/8fd055cb-287c-4e6d-b843-bb8458b184b7"
+    alt="LINE Chatbot Admin Dashboard"
+  />
+</p>
+
+---
+
+# 🔐 Security
+
+**ห้าม Commit ไฟล์ `.env` ขึ้น GitHub เด็ดขาด**
+
+ไฟล์ `.gitignore` ควรมี:
+
+```gitignore
+.env
+venv/
+__pycache__/
+*.pyc
+```
+
+หาก API Key หลุดหรือถูกเผยแพร่ไปแล้ว:
+
+1. **Revoke API Key เดิมทันที**
+2. สร้าง API Key ใหม่
+3. เปลี่ยนค่าใน `.env`
+4. ตรวจสอบ Git History หาก Key เคยถูก Commit ไปแล้ว
+
+---
+
+# 🧰 Technologies
+
+| Technology         | Purpose                                  |
+| ------------------ | ---------------------------------------- |
+| Python             | Backend                                  |
+| Flask              | Web Server / Webhook                     |
+| LINE Messaging API | รับและส่งข้อความ                         |
+| Gemini AI          | Natural Language Processing              |
+| ngrok              | เปิด Local Server ให้เข้าถึงจาก Internet |
+| dotenv             | จัดการ Environment Variables             |
+
+---
+
+# ✨ Features
+
+* 🤖 AI Chatbot ด้วย Gemini
+* 💬 รองรับภาษาธรรมชาติ
+* 🛍️ ตอบคำถามเกี่ยวกับสินค้า
+* 💰 ตอบข้อมูลราคาและค่าจัดส่ง
+* 🏪 ตอบข้อมูลร้านค้า
+* 📱 เชื่อมต่อ LINE Official Account
+* 🔐 แยก API Keys ออกจาก Source Code
+* 🌐 รองรับ Webhook ผ่าน ngrok
+
+---
+
+# 📌 Important
+
+> โปรเจกต์นี้เหมาะสำหรับใช้เป็น Starter Template สำหรับสร้าง LINE AI Chatbot สำหรับร้านค้าออนไลน์
+
+ก่อนนำไปใช้งานจริง ควรเพิ่มระบบ Authentication, Database, Logging, Error Handling และระบบจัดการคำสั่งซื้อเพื่อให้เหมาะกับ Production Environment
