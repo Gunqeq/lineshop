@@ -80,6 +80,13 @@ LINE Official Account Manager เพื่อไม่ให้ชนกับ�
 เพิ่มเพื่อน LINE OA ของคุณ (QR code อยู่หน้า Messaging API)
 แล้วลองพิมพ์คุยดู เช่น "มีเสื้อสีดำไหม" หรือ "ค่าส่งเท่าไหร่"
 
+## 📸 Screenshots
+
+|  User — Chat |  Admin — Dashboard |
+|:---:|:---:|
+| <img width="869" height="1884" alt="image" src="https://github.com/user-attachments/assets/ac2af9e6-7923-4065-b31f-eca94b625c1c" />
+ | <img width="1900" height="990" alt="image" src="https://github.com/user-attachments/assets/8fd055cb-287c-4e6d-b843-bb8458b184b7" />
+ |
 
 
 ห้าม commit ไฟล์ `.env` ขึ้น GitHub เด็ดขาด (มี `.gitignore` กันไว้ให้แล้ว)
